@@ -4,7 +4,7 @@ This project aims to help traders managing multiple sessions of finvasia web ter
 
 
 
-## accounts Creds
+## Accounts Creds
 
 To run this project, you will need to add the following fields to accounts.csv
 
