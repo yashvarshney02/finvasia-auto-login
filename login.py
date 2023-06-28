@@ -19,6 +19,8 @@ def get_user_options():
     """
     return accounts.user.to_list()
 
+drivers = {}
+
 while True:
     # now show user some options to select a user from
     options = get_user_options()
@@ -39,18 +41,18 @@ while True:
         # now open a new chrome window
         # installing manager will take care for the driver itself, no need to pass
         # the executable path
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        drivers[user] = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
     except Exception as E:
         print("Not able to open browser due to error:", E)
         continue
         
     # open finvasia new window
-    driver.get(ROOT_URL)
+    drivers[user].get(ROOT_URL)
     check = True # this is for checking if webpage has the current html tags
     
     while check:
         try:
-            input_field = driver.execute_script("return document.querySelector('body > flt-glass-pane').shadowRoot.querySelector('input');")
+            input_field = drivers[user].execute_script("return document.querySelector('body > flt-glass-pane').shadowRoot.querySelector('input');")
             # send the user name
             input_field.send_keys(user)
             input_field.send_keys(Keys.TAB)
@@ -61,14 +63,14 @@ while True:
         time.sleep(1) # a gap of 1 second
         
     try:
-        input_field = driver.execute_script("return document.querySelector('body > flt-glass-pane').shadowRoot.querySelector('input');")
+        input_field = drivers[user].execute_script("return document.querySelector('body > flt-glass-pane').shadowRoot.querySelector('input');")
         # now send the password
         input_field.send_keys(password)
         input_field.send_keys(Keys.TAB)
         
         # finally send the totp
         totp = pyotp.TOTP(totp_secret).now()
-        input_field = driver.execute_script("return document.querySelector('body > flt-glass-pane').shadowRoot.querySelector('input');")
+        input_field = drivers[user].execute_script("return document.querySelector('body > flt-glass-pane').shadowRoot.querySelector('input');")
         input_field.send_keys(totp)
         input_field.send_keys(Keys.RETURN)
         
